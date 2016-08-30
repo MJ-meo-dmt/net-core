@@ -5,7 +5,6 @@
 import sys
 
 ### PANDA Imports ###
-from direct.showbase.ShowBase import ShowBase
 from panda3d.core import QueuedConnectionManager
 from panda3d.core import QueuedConnectionReader
 from panda3d.core import QueuedConnectionListener
@@ -16,20 +15,18 @@ from panda3d.core import DatagramIterator
 
 from direct.task.Task import Task
 from utils import Queue
-#from Server.protocol.opcodes import MSG_NONE
+from opcodes import MSG_NONE
 #from Server.Util import generateUUID
 
 ########################################################################
 
+## Server Side TCP ##
 
-class SocketTCP(ShowBase):
+class SocketTCP():
 
     def __init__(self, _parent=None):
-        ShowBase.__init__(self, windowType = 'none')
-        print ("TCP Protocol Startup...")
-        #self.parent = _parent
+        self.parent = _parent
 
-        #self.config = self.parent.server.config
         # tmp config
         self.tcpport = 6000
         self.backlog = 10
@@ -39,6 +36,7 @@ class SocketTCP(ShowBase):
 
 
     def startAll(self):
+        print ("TCP Protocol Startup...")
         self.setupTCP()
         self.startTCPTasks()
 
@@ -178,11 +176,3 @@ class SocketTCP(ShowBase):
             self.addPacketToSendQueue(self.sendPacketQueue.removeFromQue())
         
         return Task.cont
-
-
-
-
-
-
-socketTcp = SocketTCP()
-socketTcp.run()
