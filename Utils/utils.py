@@ -1,3 +1,15 @@
+import uuid
+
+# tools
+def giveUUID():
+    return str(uuid.uuid4().fields[-1])[:5]
+
+
+
+
+
+
+
 
 # Simple queue class
 class Queue:

@@ -12,11 +12,15 @@ from panda3d.core import ConnectionWriter
 from panda3d.core import PointerToConnection, NetAddress, NetDatagram
 from panda3d.core import Datagram
 from panda3d.core import DatagramIterator
-
 from direct.task.Task import Task
+
+### NEt core ###
 from Utils.utils import Queue
+from Utils.utils import giveUUID
 from .opcodes import MSG_NONE
-#from Server.Util import generateUUID
+from NetworkServer.clientObject import ClientObject
+
+
 
 ########################################################################
 
@@ -35,7 +39,7 @@ class SocketTCP():
         self.sendPacketQueue = Queue()
 
         # Connections
-        self.activeConnections = []
+        self.activeConnections = None
 
 
     def start(self):
@@ -78,17 +82,17 @@ class SocketTCP():
             
             if self.tcpListener.getNewConnection(rendezvous, netAddress, newConnection):
                 newConnection = newConnection.p()
-                
-                # Tell the reader about the new TCP connection
-                self.tcpReader.addConnection(newConnection)
 
-                self.activeConnections.append(newConnection)
+                if self.activeConnections != None:
+                    # Tell the reader about the new TCP connection
+                    self.tcpReader.addConnection(newConnection)
+                    self.activeConnections[giveUUID()] = ClientObject(giveUUID(), newConnection)
+
                     
-                print ("Server: " + str(generateUUID), str(netAddress.getIpString()))
+                print ("Server: " + str(giveUUID()), str(netAddress.getIpString()))
             else:
                 print ("Server: Connection Failed from -", str(netAddress.getIpString()))    
                     
-            
         return Task.cont
 
 
@@ -141,13 +145,13 @@ class SocketTCP():
             resetConnection = PointerToConnection()
             self.tcpManager.getResetConnection(resetConnection)
             print(str(resetConnection.p()))
-            #for client in self.core.server.clients:
-            #    if self.core.server.clients[client].connection == resetConnection.p():
-            #        del self.core.server.clients[client]
-            #        self.tcpReader.removeConnection(resetConnection.p())
-            #        print ("Removed Connection:", resetConnection.p())
-            #        print ('Current Clients:', self.core.server.clients)
-            #        break
+            for client in self.activeConnections:
+                if self.activeConnections[client].connection == resetConnection.p():
+                    del self.activeConnections[client]
+                    self.tcpReader.removeConnection(resetConnection.p())
+                    print ("Removed Connection:", resetConnection.p())
+                    print ('Current Client Objects:', self.activeConnections)
+                    break
 
         return Task.cont
 

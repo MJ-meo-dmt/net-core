@@ -12,7 +12,7 @@ from Utils.utils import Queue
 
 ########################################################################
 
-## Simple Network Server Manager ##
+## Simple Network Client Manager ##
 
 class Manager():
 
@@ -28,8 +28,8 @@ class Manager():
         # Rates
         self.sendingRate = 40/1000
 
-        # Connections / Client Objects
-        self.clientObjects = {}
+        # Connection to server
+        self.serverConnection = None
 
 
     def start(self):

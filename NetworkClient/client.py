@@ -6,14 +6,14 @@
 ### PANDA Imports ###
 
 ### Net Core ###
-from Sockets.TCP_Socket import SocketTCP
+from Sockets.TCP_Socket_Client import SocketTCPClient
 from .manager import Manager
 
 ########################################################################
 
-## Simple Network Server ##
+## Simple Network Client ##
 
-class Server():
+class Client():
 
     def __init__(self, _parent=None):
         self.parent = _parent
@@ -30,11 +30,11 @@ class Server():
         self.manager = Manager(self)
         self.manager.start()
 
-        # Set clientObjects holder
-        self.socketTCP.activeConnections = self.manager.clientObjects
+        # Connect to server
+        self.socketTCP.connectToServer()
 
     def setSocket(self):
-        self.socketTCP = SocketTCP()
+        self.socketTCP = SocketTCPClient()
 
     def sendPacket(self, _type, _data, _connection, _channel=0): #0=tcp, 1=udp
         self.manager.buildPacket(_type, _data, _connection, _channel)

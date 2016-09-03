@@ -16,18 +16,18 @@ from panda3d.core import DatagramIterator
 from direct.task.Task import Task
 
 ## Server Imports ##
-from opcodes import MSG_NONE
+from .opcodes import MSG_NONE
 
 ########################################################################
 
 
-class TCP():
+class SocketTCPClient():
 
-    def __init__(self, _parent):
+    def __init__(self, _parent=None):
         self.parent = _parent
         #self.config = self.core.client.config
         self.hostIP = '127.0.0.1'
-        self.hostPort = 6000
+        self.port = 6001
 
         # Connection on TCP 
         self.tcpConnection = None
