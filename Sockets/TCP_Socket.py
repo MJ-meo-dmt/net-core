@@ -14,8 +14,8 @@ from panda3d.core import Datagram
 from panda3d.core import DatagramIterator
 
 from direct.task.Task import Task
-from utils import Queue
-from opcodes import MSG_NONE
+from Utils.utils import Queue
+from .opcodes import MSG_NONE
 #from Server.Util import generateUUID
 
 ########################################################################
@@ -32,10 +32,13 @@ class SocketTCP():
         self.backlog = 10
         self.hostname = '127.0.0.1'
 
-        self.sendPacketQueue = []
+        self.sendPacketQueue = Queue()
+
+        # Connections
+        self.activeConnections = []
 
 
-    def startAll(self):
+    def start(self):
         print ("TCP Protocol Startup...")
         self.setupTCP()
         self.startTCPTasks()
@@ -79,7 +82,7 @@ class SocketTCP():
                 # Tell the reader about the new TCP connection
                 self.tcpReader.addConnection(newConnection)
 
-                #self.core.createPlayerObject(generateUUID(),newConnection, netAddress)
+                self.activeConnections.append(newConnection)
                     
                 print ("Server: " + str(generateUUID), str(netAddress.getIpString()))
             else:
@@ -161,7 +164,7 @@ class SocketTCP():
                 conn = self.serverManager.clients[client].connection
                 self.tcpWriter.send(_pkt, conn)
 
-    def addPacketToSendQueue(self, _data):
+    def addPacketToSendQueue(self, _pkt):
         # _data should contain packet and connection
         pass
 
